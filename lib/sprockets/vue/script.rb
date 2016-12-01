@@ -12,7 +12,12 @@ module Sprockets::Vue
           CoffeeScript.compile(s, sourceMap: true, sourceFiles: [input[:source_path]], no_wrap: true)
         },
         'es6' => ->(s, input){
-          Babel::Transpiler.transform(data, {}) #TODO
+          Babel::Transpiler.transform(s, {
+            'sourceRoot' => input[:load_path],
+            'moduleRoot' => nil,
+            'filename' => input[:filename],
+            'filenameRelative' => input[:environment].split_subpath(input[:load_path], input[:filename])
+          })
         }
       }
       def call(input)
