@@ -32,8 +32,12 @@ module Sprockets::Vue
             result = SCRIPT_COMPILES[script[:lang]].call(script[:content], input)
             map = result['sourceMap']
 
-            output << "'object' != typeof VCompents && (VCompents = {});
-              #{result['js']}; VCompents['#{name}'] = vm;"
+            case script[:lang]
+            when 'coffee'
+              output << "'object' != typeof VCompents && (VCompents = {}); #{result['js']}; VCompents['#{name}'] = vm;"
+            when 'es6'
+              output << "'object' != typeof VCompents && (VCompents = {}); var exports = {}; var module = {}; #{result['code']}; VCompents['#{name}'] = module.exports;"
+            end
           end
 
           if template
